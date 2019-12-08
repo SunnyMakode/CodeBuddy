@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CodeBuddy.Api.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeBuddy.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OutcomeController : ControllerBase
@@ -19,7 +18,7 @@ namespace CodeBuddy.Api.Controllers
             _dataContext = dataContext;
         }
 
-        // GET api/outcomes
+        // GET api/outcome
         [HttpGet]
         public async Task<IActionResult> GetOutcome()
         {
@@ -28,8 +27,9 @@ namespace CodeBuddy.Api.Controllers
             return Ok(result);
         }
 
-        // GET api/outcomes/5
+        // GET api/outcome/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetOutcome(int id)
         {
             var result = await _dataContext.Outcomes.FirstOrDefaultAsync(x => x.Id == id);
@@ -37,19 +37,19 @@ namespace CodeBuddy.Api.Controllers
             return Ok(result);
         }
 
-        // POST api/values
+        // POST api/outcome
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/outcomes/5
+        // PUT api/outcome/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/outcomes/5
+        // DELETE api/outcome/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

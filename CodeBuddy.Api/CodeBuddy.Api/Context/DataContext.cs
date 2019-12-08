@@ -13,5 +13,6 @@ namespace CodeBuddy.Api.Context
             : base(contextOptions) { }
 
         public DbSet<Outcome> Outcomes { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
