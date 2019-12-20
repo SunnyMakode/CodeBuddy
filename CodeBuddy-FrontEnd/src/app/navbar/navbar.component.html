@@ -1,0 +1,28 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Code Buddy</a>
+
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item active">
+      <a class="nav-link" href="#">Matches </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Lists</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link " href="#">Messsages</a>
+    </li>
+  </ul>
+
+  <form #LoginForm = "ngForm" class="form-inline my-2 my-lg-0" (ngSubmit)= "login()">
+    <input class="form-control mr-sm-2" name ="username" type="text" required 
+    placeholder="Username" [(ngModel)]="model.username">
+
+    <input class="form-control mr-sm-2" name ="password" type="password" required 
+    placeholder="Password" [(ngModel)]="model.password">
+
+    <button [disabled] = "!LoginForm.valid" 
+    class="btn btn-success my-2 my-sm-0" 
+    type="submit">Login</button>
+  </form>
+
+</nav>
