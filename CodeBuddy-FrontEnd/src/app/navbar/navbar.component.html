@@ -13,15 +13,26 @@
     </li>
   </ul>
 
-  <form #LoginForm = "ngForm" class="form-inline my-2 my-lg-0" (ngSubmit)= "login()">
-    <input class="form-control mr-sm-2" name ="username" type="text" required 
+  <div *ngIf="loggedIn()" class="dropdown">
+    <button class=" dropdown-toggle text-light">
+      Welcome User
+    </button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="#"><i class="fa fa-user"></i>Edit Profile</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#"><i class="fa fa-sign-out"></i>Log Out</a>
+    </div>
+  </div>
+
+  <form *ngIf="!loggedIn()" #LoginForm = "ngForm" class="form-inline my-2 my-lg-0" (ngSubmit)= "login()">
+    <input class="form-control mr-sm-2" name ="username" type="text" required
     placeholder="Username" [(ngModel)]="model.username">
 
-    <input class="form-control mr-sm-2" name ="password" type="password" required 
+    <input class="form-control mr-sm-2" name ="password" type="password" required
     placeholder="Password" [(ngModel)]="model.password">
 
-    <button [disabled] = "!LoginForm.valid" 
-    class="btn btn-success my-2 my-sm-0" 
+    <button [disabled] = "!LoginForm.valid"
+    class="btn btn-success my-2 my-sm-0"
     type="submit">Login</button>
   </form>
 
