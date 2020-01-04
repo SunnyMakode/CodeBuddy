@@ -1,3 +1,4 @@
+using System.Net;
 using CodeBuddy.Api.Context;
 using CodeBuddy.Api.Context.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,6 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CodeBuddy.Api.Helpers;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 
 namespace CodeBuddy.Api
 {
@@ -54,6 +58,24 @@ namespace CodeBuddy.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async x =>
+                    {
+                        x.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+
+                        var error = x.Features.Get<IExceptionHandlerFeature>();
+
+                        if (error != null)
+                        {
+                            x.Response.AddApplicationError(error.Error.Message);
+                            await x.Response.WriteAsync(error.Error.Message);
+                        }
+                    });
+                });
             }
 
             //app.UseHttpsRedirection();
