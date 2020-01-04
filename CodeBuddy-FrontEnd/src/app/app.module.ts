@@ -1,3 +1,4 @@
+import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -22,7 +23,9 @@ import { RegisterComponent } from './register/register.component';
       HttpClientModule,
       FormsModule
    ],
-   providers: [],
+   providers: [
+     ErrorInterceptorProvider
+   ],
    bootstrap: [
       AppComponent
    ]

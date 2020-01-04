@@ -20,7 +20,7 @@ export class NavbarComponent implements OnInit {
       console.log('logged in successfully');
     },
     error => {
-      console.log('Error occured');
+      console.log(error);
     });
   }
 
