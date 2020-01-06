@@ -3,23 +3,26 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using CodeBuddy.Api.Model;
 using Microsoft.EntityFrameworkCore;
+using CodeBuddy.Api.Helpers;
 
 namespace CodeBuddy.Api.Context.Repository
 {
     public class AuthRepository : IAuthRepository
     {
         private readonly DataContext _dataContext;
+        private readonly PasswordManager _passwordManager;
 
         public AuthRepository(DataContext dataContext)
         {
             this._dataContext = dataContext;
+            this._passwordManager = new PasswordManager();
         }
 
         public async Task<User> Register(User user, string password)
         {
             byte[] passwordHash, passwordSalt;
 
-            CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            _passwordManager.CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
@@ -39,7 +42,7 @@ namespace CodeBuddy.Api.Context.Repository
                 return null;
             }
 
-            if (!VerifyPasswordHash(password , user.PasswordHash, user.PasswordSalt))
+            if (!_passwordManager.VerifyPasswordHash(password , user.PasswordHash, user.PasswordSalt))
             {
                 return null;
             }
@@ -55,33 +58,6 @@ namespace CodeBuddy.Api.Context.Repository
             } 
             
             return false;
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != passwordHash[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
+        }        
     }
 }
