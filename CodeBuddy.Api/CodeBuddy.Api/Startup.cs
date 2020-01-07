@@ -13,6 +13,8 @@ using System.Text;
 using CodeBuddy.Api.Helpers;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using CodeBuddy.Api.Context.DummySeedData;
+using AutoMapper;
 
 namespace CodeBuddy.Api
 {
@@ -30,9 +32,18 @@ namespace CodeBuddy.Api
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson( opt =>
+            {
+                opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
 
             services.AddCors();
+
+            services.AddAutoMapper(typeof(GenericRepository).Assembly);
+
+            //services.AddTransient<Seed>();
+
+            services.AddScoped<IGenericRepository, GenericRepository>();
 
             services.AddScoped<IAuthRepository, AuthRepository>();
 
