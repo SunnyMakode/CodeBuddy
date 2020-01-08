@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CodeBuddy.Api.Context.Repository;
+using CodeBuddy.Api.Dtos;
 using CodeBuddy.Api.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +19,12 @@ namespace CodeBuddy.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IGenericRepository _genericRepository;
+        private readonly IMapper _mapper;
 
-        public UserController(IGenericRepository genericRepository)
+        public UserController(IGenericRepository genericRepository, IMapper mapper)
         {
             this._genericRepository = genericRepository;
+            this._mapper = mapper;
         }
 
         // GET: api/<controller>
@@ -28,19 +32,19 @@ namespace CodeBuddy.Api.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var users = await _genericRepository.GetAll<User>(i => i.Photos);
-
-            return Ok(users);
+            var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+            return Ok(usersToReturn);
         }
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var users = await _genericRepository.Get<User>(id
+            var user = await _genericRepository.Get<User>(id
                 , i => i.Photos
                 , i => i.Id == id);
 
-            return Ok(users);
+            return Ok(user);
         }        
     }
 }
