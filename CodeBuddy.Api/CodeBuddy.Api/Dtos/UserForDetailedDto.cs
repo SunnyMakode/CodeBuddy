@@ -20,7 +20,7 @@ namespace CodeBuddy.Api.Dtos
         public string Interests { get; set; }
         public string City { get; set; }
         public string Country { get; set; }
-        public string MainPhotoUrl { get; set; }
+        public string PhotoUrl { get; set; }
         public ICollection<PhotosForDetailedDto> Photos { get; set; }
     }
 }
