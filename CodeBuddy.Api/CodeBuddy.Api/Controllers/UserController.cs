@@ -44,7 +44,7 @@ namespace CodeBuddy.Api.Controllers
                 , i => i.Photos
                 , i => i.Id == id);
 
-            var usersToReturn = _mapper.Map<IEnumerable<UserForDetailedDto>>(user);
+            var usersToReturn = _mapper.Map<UserForDetailedDto>(user);
             
             return Ok(usersToReturn);
         }        
