@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using CodeBuddy.Api.Context.Repository;
@@ -47,6 +48,29 @@ namespace CodeBuddy.Api.Controllers
             var usersToReturn = _mapper.Map<UserForDetailedDto>(user);
             
             return Ok(usersToReturn);
-        }        
+        }  
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var userFromRepo = await _genericRepository.Get<User>(id
+                , i => i.Photos
+                , i => i.Id == id);
+
+            _mapper.Map(userForUpdateDto, userFromRepo);
+
+            if (await _genericRepository.SaveAll())
+            {
+                return NoContent();
+            }
+
+            throw new Exception($"Updating user failed for {id}");
+        }
+
     }
 }

@@ -21,6 +21,7 @@ import { MessagesComponent } from './messages/messages.component';
 import { ListsComponent } from './lists/lists.component';
 
 import { appRoutes } from './routes';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 
 
 export function tokenGetter() {
@@ -46,6 +47,7 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       MemberListComponent,
       MemberCardComponent,
       MemberDetailedComponent,
+      MemberEditComponent,
       MessagesComponent,
       ListsComponent
    ],

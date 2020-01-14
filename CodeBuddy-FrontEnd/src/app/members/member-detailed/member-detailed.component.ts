@@ -1,18 +1,18 @@
-import { AlertifyService } from "./../../_services/alertify.service";
-import { UserService } from "./../../_services/user.service";
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { User } from "src/app/_models/User";
+import { AlertifyService } from './../../_services/alertify.service';
+import { UserService } from './../../_services/user.service';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { User } from 'src/app/_models/User';
 import {
   NgxGalleryOptions,
   NgxGalleryImage,
   NgxGalleryAnimation
-} from "ngx-gallery";
+} from 'ngx-gallery';
 
 @Component({
-  selector: "app-member-detailed",
-  templateUrl: "./member-detailed.component.html",
-  styleUrls: ["./member-detailed.component.css"]
+  selector: 'app-member-detailed',
+  templateUrl: './member-detailed.component.html',
+  styleUrls: ['./member-detailed.component.css']
 })
 export class MemberDetailedComponent implements OnInit {
   user: User;
@@ -27,13 +27,13 @@ export class MemberDetailedComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(userData => {
-      this.user = userData["userRouteResolver"];
+      this.user = userData['userRouteResolver'];
     });
 
     this.galleryOptions = [
       {
-        width: "600px",
-        height: "400px",
+        width: '600px',
+        height: '400px',
         thumbnailsColumns: 4,
         imagePercent: 80,
         imageAnimation: NgxGalleryAnimation.Slide,
