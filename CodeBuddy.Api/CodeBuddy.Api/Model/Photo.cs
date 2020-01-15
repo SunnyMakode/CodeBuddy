@@ -9,6 +9,9 @@ namespace CodeBuddy.Api.Model
         public string Description { get; set; }
         public DateTime DateAdded { get; set; }
         public bool IsMainPhoto { get; set; }
+
+        //Cloudinary returns the publicID on successful upload
+        public string PublicId { get; set; }
         public User User { get; set; }
         public int UserId { get; set; }
     }

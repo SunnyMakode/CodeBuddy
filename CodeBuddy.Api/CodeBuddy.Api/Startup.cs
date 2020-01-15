@@ -39,6 +39,9 @@ namespace CodeBuddy.Api
 
             services.AddCors();
 
+            //Popolaute the CloudinarySettings property with the values from CloudinaryAcountSettings
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinaryAcountSettings"));
+
             services.AddAutoMapper(typeof(GenericRepository).Assembly);
 
             //services.AddTransient<Seed>();
