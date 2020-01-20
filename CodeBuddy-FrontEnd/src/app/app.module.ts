@@ -5,6 +5,7 @@ import { NgModule } from '@angular/core';
 import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxGalleryModule } from 'ngx-gallery';
+import { FileUploadModule } from 'ng2-file-upload';
 import { JwtModule } from '@auth0/angular-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +23,8 @@ import { ListsComponent } from './lists/lists.component';
 
 import { appRoutes } from './routes';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { PhotoEditComponent } from './members/photo-edit/photo-edit.component';
+
 
 
 export function tokenGetter() {
@@ -49,6 +52,7 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       MemberDetailedComponent,
       MemberEditComponent,
       MessagesComponent,
+      PhotoEditComponent,
       ListsComponent
    ],
    imports: [
@@ -58,6 +62,7 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       FormsModule,
       BrowserAnimationsModule,
       NgxGalleryModule,
+      FileUploadModule,
       BsDropdownModule.forRoot(),
       RouterModule.forRoot(appRoutes),
       TabsModule.forRoot(),

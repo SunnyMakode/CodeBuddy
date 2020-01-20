@@ -24,6 +24,7 @@ namespace CodeBuddy.Api.Controllers
         private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
         private Cloudinary _cloudinary;
 
+        //IOptions is use to access the configuration service that we've in startup.cs
         public PhotosController(IGenericRepository genericRepository,
                                 IMapper mapper,
                                 IOptions<CloudinarySettings> cloudinaryConfig)
@@ -43,7 +44,7 @@ namespace CodeBuddy.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPhotoForUser(int userId, PhotoForCreationDto photoForCreationDto)
+        public async Task<IActionResult> AddPhotoForUser(int userId, [FromForm] PhotoForCreationDto photoForCreationDto)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -65,7 +66,7 @@ namespace CodeBuddy.Api.Controllers
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(file.Name, stream),
-                        Transformation = new Transformation().Width(500).Height(500).Crop("Fill").Gravity("face")
+                        Transformation = new Transformation().Width(500).Height(500).Crop("fill").Gravity("face")
                     };
 
                     uploadResult = _cloudinary.Upload(uploadParams);
@@ -86,10 +87,73 @@ namespace CodeBuddy.Api.Controllers
 
             if (await _genericRepository.SaveAll())
             {
-                return Ok();
+                var photoToReturn = _mapper.Map<PhotoForReturnDto>(photo);
+
+                //return Ok();
+                // calling GetPhoto action method
+                return CreatedAtRoute(
+                    "GetPhoto",
+                    new
+                    {
+                        userId = userId,
+                        id = photo.Id
+                    },
+                    photoToReturn);
             }
 
             return BadRequest("Could not add the photo");
         }
+
+        [HttpGet("{id}", Name = "GetPhoto")]
+        public async Task<IActionResult> GetPhoto(int id)
+        {
+            var photoFromRepo = await _genericRepository.Get<Photo>(id);
+
+            var photo = _mapper.Map<PhotoForReturnDto>(photoFromRepo);
+
+            return Ok(photo);
+        }
+
+        [HttpPost("{id}/setMain")]
+        public async Task<IActionResult> SetMainPhoto(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var userFromRepo = await _genericRepository.Get<User>(userId
+                , i => i.Photos
+                , i => i.Id == userId);
+
+            if (!userFromRepo.Photos.Any(p => p.Id == id))
+            {
+                return Unauthorized();
+            }
+
+            var photoFromRepo = await _genericRepository.Get<Photo>(id);
+
+            if (photoFromRepo.IsMainPhoto)
+            {
+                return BadRequest("This is already a main photo");
+            }
+
+            var currentMainPhoto = await _genericRepository.Get<Photo>(userId,
+                i => i.UserId == userId,
+                j => j.IsMainPhoto);
+
+            currentMainPhoto.IsMainPhoto = false;
+
+            photoFromRepo.IsMainPhoto = true;
+
+            if (await _genericRepository.SaveAll())
+            {
+                return NoContent();
+            }
+
+            return BadRequest("Could not set photo as main");
+        }
     }
+
+     
 }

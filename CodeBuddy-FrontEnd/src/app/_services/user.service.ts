@@ -17,22 +17,25 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-baseUrl = environment.apiUrl;
+  baseUrl = environment.apiUrl;
 
-constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-getUsers(): Observable<User[]> {
-  // return this.http.get<User[]>(this.baseUrl + 'user', httpOptions);
-  return this.http.get<User[]>(this.baseUrl + 'user');
-}
+  getUsers(): Observable<User[]> {
+    // return this.http.get<User[]>(this.baseUrl + 'user', httpOptions);
+    return this.http.get<User[]>(this.baseUrl + 'user');
+  }
 
-getUser(id): Observable<User> {
-  // return this.http.get<User>(this.baseUrl + 'user/' + id, httpOptions);
-  return this.http.get<User>(this.baseUrl + 'user/' + id);
-}
+  getUser(id): Observable<User> {
+    // return this.http.get<User>(this.baseUrl + 'user/' + id, httpOptions);
+    return this.http.get<User>(this.baseUrl + 'user/' + id);
+  }
 
-updateUser(id: number, user: User) {
-  return this.http.put(this.baseUrl + 'user/' + id, user);
-}
+  updateUser(id: number, user: User) {
+    return this.http.put(this.baseUrl + 'user/' + id, user);
+  }
 
+  setMainPhoto(userId: number, id: number) {
+    return this.http.post(this.baseUrl + 'user/' + userId + '/photos/' + id + '/setMain', {});
+  }
 }

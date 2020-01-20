@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using CodeBuddy.Api.Context.Repository;
 using CodeBuddy.Api.Dtos;
 using CodeBuddy.Api.Model;
@@ -20,11 +21,13 @@ namespace CodeBuddy.Api.Controllers
     {
         private readonly IAuthRepository _authRepository;
         private readonly IConfiguration _appConfig;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository authRepository, IConfiguration appConfig)
+        public AuthController(IAuthRepository authRepository, IConfiguration appConfig, IMapper mapper)
         {
             this._authRepository = authRepository;
             this._appConfig = appConfig;
+            this._mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -79,9 +82,12 @@ namespace CodeBuddy.Api.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
             return Ok(new
             {
-                token = tokenHandler.WriteToken(token)
+                token = tokenHandler.WriteToken(token),
+                user
             });
         }
     }

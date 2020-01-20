@@ -26,6 +26,18 @@ namespace CodeBuddy.Api.Context.Repository
             _context.Remove(entity);
         }
 
+        public async Task<T> Get<T>(int id) where T : class
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task<T> Get<T>(int id
+            , Expression<Func<T, bool>> predicate1
+            , Expression<Func<T, bool>> predicate2) where T : class
+        {
+            return await _context.Set<T>().Where(predicate1).FirstOrDefaultAsync(predicate2);
+        }
+
         public async Task<T> Get<T>(int id
             , Expression<Func<T, object>> includes
             , Expression<Func<T, bool>> predicate) where T : class
