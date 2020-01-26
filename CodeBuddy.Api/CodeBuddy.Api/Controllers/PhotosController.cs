@@ -153,7 +153,54 @@ namespace CodeBuddy.Api.Controllers
 
             return BadRequest("Could not set photo as main");
         }
-    }
 
-     
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePhoto(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var userFromRepo = await _genericRepository.Get<User>(userId
+                , i => i.Photos
+                , i => i.Id == userId);
+
+            if (!userFromRepo.Photos.Any(p => p.Id == id))
+            {
+                return Unauthorized();
+            }
+
+            var photoFromRepo = await _genericRepository.Get<Photo>(id);
+
+            if (photoFromRepo.IsMainPhoto)
+            {
+                return BadRequest("You cannot delete a main photo");
+            }
+
+            if (photoFromRepo.PublicId != null)
+            {
+                var deleteParams = new DeletionParams(photoFromRepo.PublicId);
+
+                var cloudinaryResult = _cloudinary.Destroy(deleteParams);
+
+                if (cloudinaryResult.Result == "ok")
+                {
+                    _genericRepository.Delete(photoFromRepo);
+                }
+            }
+
+            if (photoFromRepo.PublicId == null)
+            {
+                _genericRepository.Delete(photoFromRepo);
+            }
+
+            if (await _genericRepository.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Failed to delete photo");
+        }
+    }    
 }
