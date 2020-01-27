@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CodeBuddy.Api.Context.Repository;
 using CodeBuddy.Api.Dtos;
+using CodeBuddy.Api.Helpers;
 using CodeBuddy.Api.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CodeBuddy.Api.Controllers
 {
+    [ServiceFilter(typeof(LogUserActivity))]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
