@@ -38,7 +38,7 @@ namespace CodeBuddy.Api.Controllers
         }
 
         // GET api/<controller>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
             var user = await _genericRepository.Get<User>(id

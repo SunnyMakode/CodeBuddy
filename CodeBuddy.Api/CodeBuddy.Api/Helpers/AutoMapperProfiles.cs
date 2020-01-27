@@ -32,6 +32,8 @@ namespace CodeBuddy.Api.Helpers
             CreateMap<Photo, PhotoForReturnDto>();
 
             CreateMap<PhotoForCreationDto, Photo>();
+
+            CreateMap<UserForRegisterDto, User>();
         }
     }
 }
