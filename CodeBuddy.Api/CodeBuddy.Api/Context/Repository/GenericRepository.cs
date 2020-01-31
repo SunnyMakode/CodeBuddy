@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CodeBuddy.Api.Helpers;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,12 @@ namespace CodeBuddy.Api.Context.Repository
         public async Task<IEnumerable<T>> GetAll<T>(Expression<Func<T, object>> includes) where T : class
         {
             return await _context.Set<T>().Include(includes).ToListAsync();
+        }
+
+        public async Task<PagedList<T>> GetAll<T>(Expression<Func<T, object>> includes, UserParams userParams) where T : class
+        {
+            var result = _context.Set<T>().Include(includes);
+            return await PagedList<T>.CreateAsync(result, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<bool> SaveAll()

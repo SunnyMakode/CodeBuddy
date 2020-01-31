@@ -32,10 +32,13 @@ namespace CodeBuddy.Api.Controllers
 
         // GET: api/<controller>
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await _genericRepository.GetAll<User>(i => i.Photos);
+            var users = await _genericRepository.GetAll<User>(i => i.Photos, userParams);
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+
             return Ok(usersToReturn);
         }
 
