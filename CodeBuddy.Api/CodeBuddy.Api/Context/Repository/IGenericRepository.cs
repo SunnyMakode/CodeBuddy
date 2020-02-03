@@ -15,7 +15,10 @@ namespace CodeBuddy.Api.Context.Repository
         Task<bool> SaveAll();
 
         Task<IEnumerable<T>> GetAll<T>(Expression<Func<T, object>> includes) where T : class;
-        Task<PagedList<T>> GetAll<T>(Expression<Func<T, object>> includes, UserParams userParams) where T : class;
+
+        Task<PagedList<T>> GetAll<T>(Expression<Func<T, object>> includes, 
+            UserParams userParams,
+            Expression<Func<T, bool>> predicate = null) where T : class;
 
         Task<T> Get<T>(int id
             , Expression<Func<T, object>> includes

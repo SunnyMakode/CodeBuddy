@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -34,7 +35,51 @@ namespace CodeBuddy.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await _genericRepository.GetAll<User>(i => i.Photos, userParams);
+            Expression<Func<User, bool>> lambdaExpression = null;
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var userFromRepo = await _genericRepository.Get<User>(currentUserId
+                , i => i.Photos
+                , i => i.Id == currentUserId);
+
+            userParams.UserId = currentUserId;
+
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender = userFromRepo.Gender == "male"
+                    ? "female"
+                    : "male";
+            }
+
+            Expression<Func<User, bool>> predicate1 = (u => u.Id != userParams.UserId && u.Gender == userParams.Gender);
+
+            lambdaExpression = predicate1;
+
+            DateTime minDob = new DateTime();
+            DateTime maxDob = new DateTime();
+
+            Expression<Func<User, bool>> predicate2 = null;
+
+            if (userParams.MinAge !=18 || userParams.MaxAge !=99)
+            {
+                minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
+                maxDob = DateTime.Today.AddYears(-userParams.MinAge);
+
+                predicate2 = (u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+            }
+            
+            if (predicate2 != null)
+            {
+                //lambdaExpression = Expression.Lambda<Func<User, bool>>(Expression.And(predicate1.Body, predicate2.Body),
+                //    predicate1.Parameters.Single());
+
+                lambdaExpression = predicate1.And(predicate2);
+            }
+            
+
+            var users = await _genericRepository.GetAll<User>(i => i.Photos, 
+                userParams, lambdaExpression);
+
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
 
             Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);

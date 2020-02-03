@@ -52,9 +52,12 @@ namespace CodeBuddy.Api.Context.Repository
             return await _context.Set<T>().Include(includes).ToListAsync();
         }
 
-        public async Task<PagedList<T>> GetAll<T>(Expression<Func<T, object>> includes, UserParams userParams) where T : class
+        public async Task<PagedList<T>> GetAll<T>(Expression<Func<T, object>> includes, 
+            UserParams userParams, 
+            Expression<Func<T, bool>> predicate = null) where T : class
         {
-            var result = _context.Set<T>().Include(includes);
+            var result = _context.Set<T>().Include(includes).AsQueryable().Where(predicate);
+
             return await PagedList<T>.CreateAsync(result, userParams.PageNumber, userParams.PageSize);
         }
 
