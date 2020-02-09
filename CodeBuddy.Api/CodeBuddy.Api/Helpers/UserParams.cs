@@ -15,7 +15,7 @@
         public int PageNumber { get; set; } = 1;
         public int MinAge { get; set; } = 18;
         public int MaxAge { get; set; } = 99;
-
-
+        public bool Followings { get; set; } = false;
+        public bool Followers { get; set; } = false;
     }
 }

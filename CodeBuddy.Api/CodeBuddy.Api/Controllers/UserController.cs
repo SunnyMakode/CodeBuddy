@@ -36,6 +36,8 @@ namespace CodeBuddy.Api.Controllers
         public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
             Expression<Func<User, bool>> lambdaExpression = null;
+            Expression<Func<User, bool>> temporaryPredicate = null;
+
             var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             var userFromRepo = await _genericRepository.Get<User>(currentUserId
@@ -53,7 +55,31 @@ namespace CodeBuddy.Api.Controllers
 
             Expression<Func<User, bool>> predicate1 = (u => u.Id != userParams.UserId && u.Gender == userParams.Gender);
 
-            lambdaExpression = predicate1;
+            if (userParams.Followers)
+            {
+                var userFollowers = await _genericRepository.GetUserFollower(userParams.UserId, userParams.Followers);
+
+                temporaryPredicate = (u => userFollowers.Contains(u.Id));
+            }
+
+            if (userParams.Followings)
+            {
+                var userFollowings = await _genericRepository.GetUserFollower(userParams.UserId, userParams.Followers);
+
+                temporaryPredicate = (u => userFollowings.Contains(u.Id));
+            }
+
+            lambdaExpression = temporaryPredicate != null ? predicate1.And(temporaryPredicate) : predicate1;
+
+            //if (predicate1 != null)
+            //{
+            //    lambdaExpression = temporaryPredicate != null ? predicate1.And(temporaryPredicate) : predicate1;
+            //}
+            //else if(temporaryPredicate != null)
+            //{
+            //    lambdaExpression = temporaryPredicate;
+            //}
+            
 
             DateTime minDob = new DateTime();
             DateTime maxDob = new DateTime();
@@ -120,6 +146,47 @@ namespace CodeBuddy.Api.Controllers
             }
 
             throw new Exception($"Updating user failed for {id}");
+        }
+
+        [HttpPost("{id}/follow/{recipientId}")]
+        public async Task<IActionResult> FollowUser(int id, int recipientId)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var userConnection = await _genericRepository.GetConnection<Follow>
+                                        ( 
+                                          id,
+                                          recipientId,
+                                          u => u.FollowerId == id && u.FollowingId == recipientId
+                                        );
+
+            if (userConnection != null)
+            {
+                return BadRequest("You already follow this user");
+            }
+
+            if (await _genericRepository.Get<User>(recipientId) == null)
+            {
+                return NotFound();
+            }
+
+            userConnection = new Follow
+            {
+                FollowerId = id,
+                FollowingId = recipientId
+            };
+
+            _genericRepository.Add<Follow>(userConnection);
+
+            if (await _genericRepository.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Filed to follow the user");
         }
 
     }

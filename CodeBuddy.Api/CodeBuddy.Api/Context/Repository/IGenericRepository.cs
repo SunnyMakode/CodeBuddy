@@ -29,5 +29,9 @@ namespace CodeBuddy.Api.Context.Repository
         Task<T> Get<T>(int id
             , Expression<Func<T, bool>> predicate1
             , Expression<Func<T, bool>> predicate2) where T : class;
+
+        Task<T> GetConnection<T>(int userId, int recipientId, Expression<Func<T, bool>> predicate) where T : class;
+
+        Task<IEnumerable<int>> GetUserFollower(int id, bool followers);
     }
 }

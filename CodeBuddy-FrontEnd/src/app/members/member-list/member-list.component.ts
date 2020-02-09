@@ -14,6 +14,13 @@ import { PaginatedResult } from 'src/app/_models/PaginatedResult';
 export class MemberListComponent implements OnInit {
 
   users: User[];
+  user: User = JSON.parse(localStorage.getItem('user'));
+  genderList = [
+                 {value: 'male', display: 'Male'},
+                 {value: 'female', display: 'Female'}
+               ];
+
+  userParams: any = {};
   pagination: Pagination;
 
   constructor(private userService: UserService,
@@ -25,10 +32,23 @@ export class MemberListComponent implements OnInit {
       this.users = userData['usersRouteResolver'].result;
       this.pagination = userData['usersRouteResolver'].pagination;
     });
+
+    this.setDefault();
+  }
+
+  resetFilters() {
+    this.setDefault();
+    this.loadUsers();
+  }
+
+  setDefault() {
+    this.userParams.gender = this.user.gender === 'female' ? 'male' : 'female';
+    this.userParams.minAge = 18;
+    this.userParams.maxAge = 99;
   }
 
   loadUsers() {
-    this.userService.getUsers(this.pagination.currentPage, this.pagination.itemsPerPage)
+    this.userService.getUsers(this.pagination.currentPage, this.pagination.itemsPerPage, this.userParams)
     .subscribe((result: PaginatedResult<User[]>) => {
       this.users = result.result;
       this.pagination = result.pagination;

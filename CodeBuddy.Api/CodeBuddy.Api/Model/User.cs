@@ -22,6 +22,8 @@ namespace CodeBuddy.Api.Model
         public string City { get; set; }
         public string Country { get; set; }
         public ICollection<Photo> Photos { get; set; }
+        public ICollection<Follow> Followers { get; set; }
+        public ICollection<Follow> Followings { get; set; }
 
     }
 }

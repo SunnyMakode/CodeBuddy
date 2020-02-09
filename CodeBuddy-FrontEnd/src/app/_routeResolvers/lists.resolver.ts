@@ -12,10 +12,11 @@ import { Observable, of } from 'rxjs';
   providedIn: 'root'
 })
 
-export class MemberListResolver implements Resolve<User[]> {
+export class ListsResolver implements Resolve<User[]> {
 
   pageNumber = 1;
   pageSize = 5;
+  followParam = 'Followings';
 
   constructor(
     private userService: UserService,
@@ -24,7 +25,7 @@ export class MemberListResolver implements Resolve<User[]> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-    return this.userService.getUsers(this.pageNumber, this.pageSize).pipe(
+    return this.userService.getUsers(this.pageNumber, this.pageSize, null, this.followParam).pipe(
       catchError(err => {
         this.alertify.error('Problem retrieving data');
         this.router.navigate(['/home']);

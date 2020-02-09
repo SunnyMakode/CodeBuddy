@@ -65,5 +65,32 @@ namespace CodeBuddy.Api.Context.Repository
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<T> GetConnection<T>(int userId, int recipientId, Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+
+            //u => u.FollowerId == userId && u.FollowingId == recipientId
+        }
+
+        public async Task<IEnumerable<int>> GetUserFollower(int id, bool followers)
+        {
+            var user = await _context.Users
+                .Include(x => x.Followers)
+                .Include(x => x.Followings)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (followers)
+            {
+                return user.Followers.Where(u => u.FollowingId == id)
+                    .Select(i => i.FollowerId);
+            }
+
+            else
+            {
+                return user.Followings.Where(u => u.FollowerId == id)
+                    .Select(i => i.FollowingId);
+            }
+        }
     }
 }
