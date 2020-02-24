@@ -29,14 +29,18 @@ export class ListsComponent implements OnInit {
       this.pagination = data['users'].pagination;
     });
 
-    this.followParam = 'Followers';
+    //this.followParam = 'Followers';
+    this.followParam = 'Followings';
+    console.log(this.pagination);
   }
 
   loadUsers() {
-    this.userService.getUsers(this.pagination.currentPage, this.pagination.itemsPerPage, null, this.followParam)
+    console.log(this.followParam);
+    this.userService.getUsers(this.pagination.currentPage, this.pagination.itemsPerPage,  null,  this.followParam)
     .subscribe((result: PaginatedResult<User[]>) => {
       this.users = result.result;
       this.pagination = result.pagination;
+      console.log(this.pagination);
     }, err => {
       this.alertify.error(err);
     });

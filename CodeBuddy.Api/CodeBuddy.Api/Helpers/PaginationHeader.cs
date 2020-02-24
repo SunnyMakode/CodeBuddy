@@ -8,7 +8,7 @@
         public int TotalPages { get; }
 
 
-        public PaginationHeader(int currentPage, int totalItems, int itemsPerPage, int totalPages)
+        public PaginationHeader(int currentPage, int itemsPerPage, int totalItems, int totalPages)
         {
             CurrentPage = currentPage;
             TotalItems = totalItems;
